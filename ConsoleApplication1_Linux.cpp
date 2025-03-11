@@ -149,7 +149,7 @@ int main()
 		}
 		if (kbhit())
 		{
-			if (cache ==0)
+			if (cache == 0)
 			{
 				key = getch();
 				if (key == 'w' && direction != 's')
@@ -187,20 +187,27 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-				if (map[x][y - 1] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x][y - 1] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						y--;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x][y - 1] == '#' || map[x][y - 1] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					y--;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
 				
 
 			}
@@ -225,21 +232,27 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-				if (map[x - 1][y] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x - 1][y] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						x--;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x - 1][y] == '#' || map[x - 1][y] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					x--;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-
 			}
 
 			if (direction == 's')
@@ -262,23 +275,27 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-
-				if (map[x + 1][y] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x + 1][y] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						x++;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x+1][y] == '#' || map[x+1][y] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					x++;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-				if (map[x][y] == '#' || map[x][y] == 'O')
-					life = 0;
 			}
 
 			if (direction == 'd')
@@ -303,28 +320,33 @@ int main()
 					cache = 0;
 
 				}
-				if (map[x][y + 1] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x][y + 1] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						y++;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x][y+1] == '#' || map[x][y+1] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					y++;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-				if (map[x][y] == '#' || map[x][y] == 'O')
-					life = 0;
 			}
 
 		}
 		if (length == 121)
 			break;
-		if (t == 2000)
+		if (t == 10000)
 			t = 0;
 		print();
 
@@ -336,7 +358,7 @@ int main()
 	}
 	if (life == 0)
 	{
-		printf("you are lose!");
+		printf("you are lose!\n");
 		return 0;
 	}
 	else
