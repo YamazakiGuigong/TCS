@@ -7,22 +7,21 @@
 
 
 char map[20][20] = { "#############",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#     SO    #",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#           #",
-						 "#############" };
-
-char map2[20][20] = { "#############",
+				     "#           #",
+					 "#           #",
+					 "#           #",
+					 "#           #",
+					 "#           #",
+					 "#     SO    #",
+					 "#           #",
+					 "#           #",
+					 "#           #",
+					 "#           #",
+					 "#           #",
+					 "#############" };
+char map1[20][20] = { "#############",
 					  "#           #",
-					  "#           #",
+				  	  "#           #",
 					  "#           #",
 					  "#           #",
 					  "#           #",
@@ -33,9 +32,8 @@ char map2[20][20] = { "#############",
 					  "#           #",
 					  "#           #",
 					  "#############" };
-
 int sequence[20][20];
-
+int length = 2,score=0;
 void print()
 {
 	int i, j;
@@ -43,7 +41,7 @@ void print()
 	CONSOLE_CURSOR_INFO curinfo;
 	curinfo.dwSize = 1;
 	curinfo.bVisible = FALSE;
-	
+
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorInfo(handle, &curinfo);
 	for (i = 0; i <= 12; i++)
@@ -76,11 +74,8 @@ void print()
 			SetConsoleCursorPosition(handle, pos);
 			printf("%c", map[i][j]);
 		}
-
+	printf("\nYour size%d,history high size%d", length,score);
 	Sleep(10);
-
-
-
 }
 
 int main()
@@ -88,32 +83,39 @@ int main()
 	const clock_t FPS = 40;
 	int startTime = 0;
 	int frameTime = 0;
-
-
-
-	int x, y, i, j, life, key, length, t, cache;
+	int endTime = 0;
+	int x, y, i, j, life, key, t, cache, num,book;
 	int food, foodx, foody;
-
-	char direction;
-
-	life = 1, food = 0, length = 2, t = 0, cache = 0;
+	char direction,ch;
+	
+	for (i = 0; i <= 12; i++)
+		for (j = 0; j <= 12; j++)
+	{
+		sequence[i][j] = 0;
+	}
+	for (i = 0; i <= 12; i++)
+		for (j = 0; j <= 12; j++)
+		{
+			map[i][j] = map1[i][j];
+		}
+	life = 1, food = 0, t = 0, cache = 0, num = 0,book=0;
 	x = 6, y = 6, direction = 'a';
 	sequence[x][y] = 1, sequence[x][y + 1] = 2;
-
+	length = 2;
+	system("cls");
 
 	while (life)
 	{
 
 		startTime = clock();
 		t++;
-		while (food == 0)
+		if (food == 0)
 		{
 			srand((unsigned)time(NULL));
 			foodx = 1 + rand() % 11;
 			foody = 1 + rand() % 11;
 			while (map[foodx][foody] != ' ')
 			{
-				srand((unsigned)time(NULL));
 				foodx = 1 + rand() % 11;
 				foody = 1 + rand() % 11;
 			}
@@ -124,7 +126,7 @@ int main()
 
 		if (_kbhit())
 		{
-			if (cache ==0)
+			if (cache == 0)
 			{
 				key = _getch();
 				if (key == 'w' && direction != 's')
@@ -137,12 +139,19 @@ int main()
 					direction = 'd';
 				cache++;
 			}
-			
+
 		}
-
-
-
-		if (t % 20 == 0)
+		endTime = clock();
+		num = endTime - startTime;
+		book = book + num;
+		if(book>= 10 && t!=0 && t!=10 && t!=20 && t!=30)
+		{
+			
+			book = book - 10;
+			t++;
+		}
+		
+		if (t % 10 == 0)
 		{
 			if (direction == 'a')
 			{
@@ -164,21 +173,28 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-				if (map[x][y - 1] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x][y - 1] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						y--;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x][y - 1] == '#' || map[x][y - 1] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					y--;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-				
+
 
 			}
 
@@ -202,21 +218,28 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-				if (map[x - 1][y] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x - 1][y] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						x--;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x - 1][y] == '#' || map[x - 1][y] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
-						}
-					length++;
-					x--;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
+							life = 0;
 
+							break;
+						}
 			}
 
 			if (direction == 's')
@@ -239,23 +262,27 @@ int main()
 					sequence[x][y] = 1;
 					cache = 0;
 				}
-
-				if (map[x + 1][y] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x + 1][y] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						x++;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x + 1][y] == '#' || map[x + 1][y] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					x++;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-				if (map[x][y] == '#' || map[x][y] == 'O')
-					life = 0;
 			}
 
 			if (direction == 'd')
@@ -280,45 +307,57 @@ int main()
 					cache = 0;
 
 				}
-				if (map[x][y + 1] == '*')
-				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+				else
+					if (map[x][y + 1] == '*')
+					{
+						for (i = 1; i <= 11; i++)
+							for (j = 1; j <= 11; j++)
+							{
+								if (sequence[i][j] > 0)
+									sequence[i][j]++;
+							}
+						length++;
+						y++;
+						sequence[x][y] = 1;
+						food = 0;
+						cache = 0;
+					}
+					else
+						if (map[x][y + 1] == '#' || map[x][y + 1] == 'O')
 						{
-							if (sequence[i][j] > 0)
-								sequence[i][j]++;
+							life = 0;
+							break;
 						}
-					length++;
-					y++;
-					sequence[x][y] = 1;
-					food = 0;
-					cache = 0;
-				}
-				if (map[x][y] == '#' || map[x][y] == 'O')
-					life = 0;
 			}
 
 		}
+		if (length > score)
+			score = length;
 		if (length == 121)
 			break;
-		if (t == 20)
+		if (t == 30)
 			t = 0;
-		print();
 
+		print();
 		frameTime = clock() - startTime + 10;
 		if (frameTime > 0 && FPS > frameTime)
 			Sleep(FPS - frameTime);
 
-
 	}
 	if (life == 0)
 	{
-		printf("you are lose!");
-		return 0;
+		
+		printf("\nyou are lose!\n");
+		printf("Press R again\n");
+		ch = _getch();
+		if (ch == 'r' || ch == 'R')
+			main();
+		else
+			return 0;
 	}
 	else
 	{
-		printf("you are win!");
-			return 0;
+		printf("\nyou are win!\n");
+		return 0;
 	}
 }
