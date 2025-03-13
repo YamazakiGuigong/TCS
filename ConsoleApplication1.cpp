@@ -3,37 +3,14 @@
 #include<time.h>
 #include <conio.h>
 #include <windows.h>
+#include <iostream>
+#include <vector>
 
 
-
-char map[20][20] = { "#############",
-				     "#           #",
-					 "#           #",
-					 "#           #",
-					 "#           #",
-					 "#           #",
-					 "#     SO    #",
-					 "#           #",
-					 "#           #",
-					 "#           #",
-					 "#           #",
-					 "#           #",
-					 "#############" };
-char map1[20][20] = { "#############",
-					  "#           #",
-				  	  "#           #",
-					  "#           #",
-					  "#           #",
-					  "#           #",
-					  "#     SO    #",
-					  "#           #",
-					  "#           #",
-					  "#           #",
-					  "#           #",
-					  "#           #",
-					  "#############" };
 int sequence[20][20];
 int length = 2,score=0;
+int rows, cols;
+std::vector<std::vector<char>> map;
 void print()
 {
 	int i, j;
@@ -44,17 +21,31 @@ void print()
 
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorInfo(handle, &curinfo);
-	for (i = 0; i <= 12; i++)
-		for (j = 0; j <= 12; j++)
+	system("cls");
+	/*for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
 		{
 			pos.X = j;
 			pos.Y = i;
-
 			SetConsoleCursorPosition(handle, pos);
 			printf(" ");
+			
 		}
-	for (i = 1; i <= 11; i++)
-		for (j = 1; j <= 11; j++)
+	}*/
+	std::vector<std::vector<char>> map(rows, std::vector<char>(cols, ' '));
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			if (i == 0 || i == rows - 1 || j == 0 || j == cols - 1) {
+				map[i][j] = '#';
+			}
+		}
+	}
+	
+	for (int i = 1; i < rows - 1; i++)
+		for (int j = 1; j < cols-1; j++)
 		{
 			if (sequence[i][j] == -1)
 				map[i][j] = '*';
@@ -65,19 +56,19 @@ void print()
 			if (sequence[i][j] > 1)
 				map[i][j] = 'O';
 		}
-
-	for (i = 0; i <= 12; i++)
-		for (j = 0; j <= 12; j++)
+	//system("pause");
+	for (const auto& row : map)
+	{
+		for (char c : row)
 		{
-			pos.X = j;
-			pos.Y = i;
-			SetConsoleCursorPosition(handle, pos);
-			printf("%c", map[i][j]);
+			std::cout << c;
 		}
-	printf("\nYour size%d,history high size%d", length,score);
+		std::cout << std::endl;
+	}
+	printf("\nYour size%d,history high size%d", length, score);
 	Sleep(10);
+	//system("pause");	
 }
-
 int main()
 {
 	const clock_t FPS = 40;
@@ -88,22 +79,41 @@ int main()
 	int food, foodx, foody;
 	char direction,ch;
 	
-	for (i = 0; i <= 12; i++)
-		for (j = 0; j <= 12; j++)
+
+	std::cout << "输入行数和列数:";
+	std::cin >> rows >> cols;
+	std::vector<std::vector<char>> map(rows, std::vector<char>(cols, ' ')); 
+	system("cls");
+	for (int i = 0; i < rows; i++) 
+	{
+		for (int j = 0; j < cols; j++) 
+		{
+			if (i == 0 || i == rows - 1 || j == 0 || j == cols - 1) {
+				map[i][j] = '#';
+			}
+		}
+	}
+
+	for (const auto& row : map)
+	{
+		for (char c : row) 
+		{
+			std::cout << c;
+		}
+		std::cout << std::endl;
+	}
+	for (i = 0; i <= rows; i++)
+		for (j = 0; j <= cols; j++)
 	{
 		sequence[i][j] = 0;
 	}
-	for (i = 0; i <= 12; i++)
-		for (j = 0; j <= 12; j++)
-		{
-			map[i][j] = map1[i][j];
-		}
-	life = 1, food = 0, t = 0, cache = 0, num = 0,book=0;
-	x = 6, y = 6, direction = 'a';
+
+	x=rows/2, y = cols / 2;
+	life = 1, food = 0, t = 0, cache = 0, num = 0,book=0, direction = 'a';
 	sequence[x][y] = 1, sequence[x][y + 1] = 2;
 	length = 2;
+	//system("pause");
 	system("cls");
-
 	while (life)
 	{
 
@@ -112,12 +122,12 @@ int main()
 		if (food == 0)
 		{
 			srand((unsigned)time(NULL));
-			foodx = 1 + rand() % 11;
-			foody = 1 + rand() % 11;
+			foodx = 1 + rand() % (rows - 1);
+			foody = 1 + rand() % (cols - 1);
 			while (map[foodx][foody] != ' ')
 			{
-				foodx = 1 + rand() % 11;
-				foody = 1 + rand() % 11;
+				foodx = 1 + rand() % (rows - 1);
+				foody = 1 + rand() % (cols - 1);
 			}
 			map[foodx][foody] = '*';
 			sequence[foodx][foody] = -1;
@@ -157,14 +167,14 @@ int main()
 			{
 				if (map[x][y - 1] == ' ')
 				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <rows - 1; i++)
+						for (j = 1; j <cols - 1; j++)
 						{
 							if (sequence[i][j] == length)
 								sequence[i][j] = 0;
 						}
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i<rows - 1; i++)
+						for (j = 1; j <cols - 1; j++)
 						{
 							if (sequence[i][j] > 0)
 								sequence[i][j]++;
@@ -176,8 +186,8 @@ int main()
 				else
 					if (map[x][y - 1] == '*')
 					{
-						for (i = 1; i <= 11; i++)
-							for (j = 1; j <= 11; j++)
+						for (i = 1; i < rows - 1; i++)
+							for (j = 1; j <cols - 1; j++)
 							{
 								if (sequence[i][j] > 0)
 									sequence[i][j]++;
@@ -202,14 +212,14 @@ int main()
 			{
 				if (map[x - 1][y] == ' ')
 				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] == length)
 								sequence[i][j] = 0;
 						}
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] > 0)
 								sequence[i][j]++;
@@ -221,8 +231,8 @@ int main()
 				else
 					if (map[x - 1][y] == '*')
 					{
-						for (i = 1; i <= 11; i++)
-							for (j = 1; j <= 11; j++)
+						for (i = 1; i <cols - 1; i++)
+							for (j = 1; j <rows - 1; j++)
 							{
 								if (sequence[i][j] > 0)
 									sequence[i][j]++;
@@ -246,14 +256,14 @@ int main()
 			{
 				if (map[x + 1][y] == ' ')
 				{
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] == length)
 								sequence[i][j] = 0;
 						}
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] > 0)
 								sequence[i][j]++;
@@ -265,8 +275,8 @@ int main()
 				else
 					if (map[x + 1][y] == '*')
 					{
-						for (i = 1; i <= 11; i++)
-							for (j = 1; j <= 11; j++)
+						for (i = 1; i <cols - 1; i++)
+							for (j = 1; j <rows - 1; j++)
 							{
 								if (sequence[i][j] > 0)
 									sequence[i][j]++;
@@ -290,14 +300,14 @@ int main()
 				if (map[x][y + 1] == ' ')
 				{
 
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] == length)
 								sequence[i][j] = 0;
 						}
-					for (i = 1; i <= 11; i++)
-						for (j = 1; j <= 11; j++)
+					for (i = 1; i <cols - 1; i++)
+						for (j = 1; j <rows - 1; j++)
 						{
 							if (sequence[i][j] > 0)
 								sequence[i][j]++;
@@ -310,8 +320,8 @@ int main()
 				else
 					if (map[x][y + 1] == '*')
 					{
-						for (i = 1; i <= 11; i++)
-							for (j = 1; j <= 11; j++)
+						for (i = 1; i <cols - 1; i++)
+							for (j = 1; j <rows - 1; j++)
 							{
 								if (sequence[i][j] > 0)
 									sequence[i][j]++;
@@ -333,7 +343,7 @@ int main()
 		}
 		if (length > score)
 			score = length;
-		if (length == 121)
+		if (length == rows*cols)
 			break;
 		if (t == 30)
 			t = 0;
@@ -361,3 +371,4 @@ int main()
 		return 0;
 	}
 }
+
