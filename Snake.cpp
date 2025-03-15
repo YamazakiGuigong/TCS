@@ -1,7 +1,10 @@
 // 导入头文件
+#include <cpp-terminal/terminal.hpp>
+#include <cpp-terminal/input.hpp>
+#include <cpp-terminal/iostream.hpp>
+#include <cpp-terminal/screen.hpp>
+#include <cpp-terminal/cursor.hpp>
 #include <iostream>
-// 导入命名空间
-using namespace std;
 // 使用类封装地图的生成及渲染
 class map
 {
@@ -10,35 +13,42 @@ private:
 
 public:
     // 获取地图的宽度和高度
-    void GetMapSize(int width, int height)
+    void GetMapSize()
     {
+        Term::terminal.setOptions(Term::Option::Cooked);
+        Term::cout << "请输入地图的宽度:" << std::endl;
+        Term::cin >> width;
+        Term::cout << "请输入地图的高度:" << std::endl;
+        Term::cin >> height;
         width = width;
         height = height;
+        Term::cout << Term::clear_screen() << std::flush;
     }
     // 渲染地图边界
-    void RenderMap(int width, int height)
+    void RenderMapBoundary()
     {
-        for (int i = 0; i < height; i++)
+        Term::cout << Term::cursor_move(0, 0);
+        for (int i = 0; i < height+2; i++)
         {
-            for (int j = 0; j < width; j++)
+            for (int j = 0; j < width+2; j++)
             {
-                if (i == 0 || i == height - 1)
+                if (i == 0 || i == height + 1)
                 {
-                    cout << "# ";
+                    Term::cout << "# ";
                 }
                 else
                 {
-                    if (j == 0 || j == width - 1)
+                    if (j == 0 || j == width + 1)
                     {
-                        cout << "# ";
+                        Term::cout << "# ";
                     }
                     else
                     {
-                        cout << "  ";
+                        Term::cout << "  ";
                     }
                 }
             }
-            cout << endl;
+            Term::cout << "\n";
         }
     }
 };
@@ -59,12 +69,9 @@ int main()
 {
     // 创建地图对象
     map m;
-    // 获取地图的宽度和高度
-    int width, height;
-    std::cout << "请输入地图的宽度和高度" << std::endl;
-    std::cin >> width >> height;
-    // 渲染地图
-    m.GetMapSize(width, height);
-    m.RenderMap(width, height);
+    // 获取地图大小
+    m.GetMapSize();
+    // 渲染地图边界
+    m.RenderMapBoundary();
     return 0;
 }
